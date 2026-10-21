@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teslimat Randevu Formu - BEST Transformer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        
+        <!-- Üst Başlık -->
+        <div class="bg-[#1e293b] p-6 text-center border-b-4 border-blue-500">
+            <h1 class="text-3xl font-bold text-white tracking-wider mb-1 flex items-center justify-center gap-2">
+                <i class="fas fa-bolt text-blue-500"></i> BEST<span class="text-lg font-light tracking-normal text-gray-400 mt-1">Transformer</span>
+            </h1>
+            <p class="text-gray-300 text-sm mt-2">Tedarikçi Resmi Sipariş (Poz) Taahhüt Portalı</p>
+        </div>
+
+        <div class="p-8">
+            <div class="mb-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-1">Merhaba, ABC İzolasyon Yetkilisi</h2>
+                <p class="text-gray-600 text-sm leading-relaxed">Üretim eksperi tarafından öncelik sırası belirlenen ve aşağıda <strong>resmi sipariş satırları (pozları)</strong> belirtilen malzemeler için teslimat tarihi ve saat aralığını giriniz.</p>
+            </div>
+
+            <!-- Resmi Sipariş ve Poz Detay Kartı -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6 space-y-3">
+                <div class="flex items-center justify-between border-b border-blue-200 pb-2">
+                    <span class="text-xs font-bold bg-blue-600 text-white px-3 py-1 rounded-full uppercase tracking-wide">Resmi Sipariş & Poz Eşleşmesi</span>
+                    <span class="text-xs font-semibold text-red-600 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i> İhtiyaç Tarihi: 14.Eki.2026</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-y-2 text-xs text-gray-700">
+                    <div><span class="text-gray-500">Proje / İş No:</span> <strong class="text-gray-900">PRJ-87280 / 3005111</strong></div>
+                    <div><span class="text-gray-500">Satın Alma Sipariş No:</span> <strong class="text-blue-800 font-mono text-sm">Sip: 8464</strong></div>
+                    <div><span class="text-gray-500">Resmi Sipariş Pozu:</span> <strong class="text-blue-800 font-mono text-sm bg-blue-100 px-2 py-0.5 rounded">Poz 27 & Poz 48</strong></div>
+                    <div><span class="text-gray-500">Stok / Malzeme Kodu:</span> <strong class="text-gray-900 font-mono">227377 (6205642)</strong></div>
+                    <div class="col-span-2 bg-white p-3 rounded-lg border border-blue-200 mt-1">
+                        <p class="text-gray-500 text-[11px] uppercase mb-0.5">Seçilen Sipariş Kalemleri (Pozlar):</p>
+                        <p class="font-bold text-gray-900 text-sm">• Sip: 8464 / Poz 27 - Sipariş Malz., Y.G. (27 Adet)</p>
+                        <p class="font-bold text-gray-900 text-sm">• Sip: 8464 / Poz 48 - İzole Silindir YG (48 Adet)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Randevu Formu -->
+            <div id="randevuFormu" class="space-y-5">
+                <h3 class="font-bold text-gray-800 text-sm border-b pb-2"><i class="far fa-calendar-check text-blue-500 mr-2"></i> Bu Pozlar İçin Teslimat Planınızı Giriniz</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">Teslim Edilecek Tarih</label>
+                        <input type="date" id="teslimTarihi" class="w-full border-2 border-gray-200 rounded-lg p-2.5 text-sm font-medium focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">Planlanan Saat Aralığı</label>
+                        <select id="teslimSaati" class="w-full border-2 border-gray-200 rounded-lg p-2.5 text-sm font-medium focus:border-blue-500 outline-none bg-white">
+                            <option value="" disabled selected>-- Seçiniz --</option>
+                            <option value="08:00 - 12:00">08:00 - 12:00 (Gündüz Ambar)</option>
+                            <option value="00:00 - 07:00">00:00 - 07:00 (Gece Vardiyası - Doğrudan Saha)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2.5 text-xs text-amber-800">
+                    <i class="fas fa-info-circle text-amber-500 mt-0.5"></i>
+                    <p>Girdiğiniz tarih ve saat, doğrudan <strong>Saha Terminali (Kiosk)</strong> ekranına ve Satın Alma paneline resmi poz numaralarıyla eşleşmiş olarak yansıyacaktır.</p>
+                </div>
+
+                <button onclick="randevuKaydet()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition text-sm">
+                    Resmi Pozlar İçin Taahhüdü Onayla
+                </button>
+            </div>
+
+            <!-- Başarı Ekranı -->
+            <div id="basariEkrani" class="hidden text-center py-6 space-y-4">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <i class="fas fa-check text-3xl text-green-500"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800">Taahhüdünüz Kaydedildi!</h2>
+                <p class="text-gray-600 text-xs">Sipariş pozlarına ait sevkiyat planı BEST Transformer üretim ve saha terminali sistemlerine aktarıldı.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function randevuKaydet() {
+            const tarih = document.getElementById('teslimTarihi').value;
+            const saat = document.getElementById('teslimSaati').value;
+            if(!tarih || !saat) { alert("Lütfen tarih ve saat seçiniz."); return; }
+            document.getElementById('randevuFormu').style.display = 'none';
+            document.getElementById('basariEkrani').classList.replace('hidden', 'block');
+        }
+    </script>
+</body>
+</html>

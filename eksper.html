@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Üretim Eksperi Önceliklendirme - BEST ERP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .sidebar-item { transition: all 0.2s; border-left: 4px solid transparent; }
+        .sidebar-item:hover { background-color: #334155; color: #fff; }
+        .sidebar-item.active { background-color: #0f172a; color: #38bdf8; border-left-color: #38bdf8; }
+        .draggable-card { cursor: grab; transition: all 0.2s; }
+        .draggable-card:active { cursor: grabbing; }
+        .draggable-card.dragging { opacity: 0.5; border: 2px dashed #2563eb; transform: scale(0.99); }
+        .stage-tab.active { background-color: #1e293b; color: #fff; border-bottom: 4px solid #38bdf8; }
+        .filter-btn.active { background-color: #2563eb; color: white; border-color: #2563eb; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- SOL MENÜ -->
+    <aside class="w-64 flex-shrink-0 flex flex-col h-full shadow-xl z-20 bg-[#1e293b] text-gray-400">
+        <div class="h-16 flex items-center justify-center border-b border-gray-700 bg-gray-900">
+            <h1 class="text-2xl font-bold text-white"><i class="fas fa-bolt text-blue-500"></i> BEST<span class="text-xs font-light align-top mt-1">ERP</span></h1>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 space-y-1">
+            <a href="index.html" class="sidebar-item flex items-center px-6 py-3"><i class="fas fa-home w-6 mr-3"></i> Ana Sayfa</a>
+            <a href="eksper.html" class="sidebar-item active flex items-center px-6 py-3 text-white"><i class="fas fa-industry w-6 mr-3"></i> Üretim Eksperi</a>
+            <a href="ambar.html" class="sidebar-item flex items-center px-6 py-3"><i class="fas fa-box w-6 mr-3"></i> Ambar Kabul</a>
+            <a href="satinalma.html" class="sidebar-item flex items-center px-6 py-3"><i class="fas fa-file-invoice-dollar w-6 mr-3"></i> Satın Alma</a>
+            <div class="pt-4 mt-4 border-t border-gray-700 px-4 space-y-2">
+                <a href="saha-terminali.html" target="_blank" class="flex items-center px-4 py-2.5 bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-xs hover:bg-indigo-600 hover:text-white transition">
+                    <i class="fas fa-tablet-alt mr-2 text-sm"></i> Saha Terminali (Kiosk)
+                </a>
+                <a href="tedarikci-randevu.html" target="_blank" class="flex items-center px-4 py-2.5 bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 rounded-lg text-xs hover:bg-emerald-600 hover:text-white transition">
+                    <i class="fas fa-external-link-alt mr-2 text-sm"></i> Tedarikçi Randevu Linki
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- ANA İÇERİK -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden">
+        
+        <!-- ÜST BAR -->
+        <header class="h-16 bg-white border-b flex items-center justify-between px-6 shadow-sm flex-shrink-0">
+            <div class="flex items-center space-x-2 h-full">
+                <button onclick="switchMainStage('SARIM', this)" class="stage-tab active h-full px-6 font-bold text-sm tracking-wider uppercase transition flex items-center gap-2">
+                    <i class="fas fa-circle-notch text-blue-400"></i> 1. SARIM
+                </button>
+                <button onclick="switchMainStage('MONTAJ', this)" class="stage-tab h-full px-6 font-bold text-sm text-gray-500 hover:text-gray-800 tracking-wider uppercase transition flex items-center gap-2">
+                    <i class="fas fa-layer-group text-amber-500"></i> 2. BOBİN MONTAJ
+                </button>
+                <button onclick="switchMainStage('BAGLANTI', this)" class="stage-tab h-full px-6 font-bold text-sm text-gray-500 hover:text-gray-800 tracking-wider uppercase transition flex items-center gap-2">
+                    <i class="fas fa-project-diagram text-emerald-500"></i> 3. BAĞLANTI
+                </button>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="openModal('modalExcelEslestir')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition shadow-sm flex items-center">
+                    <i class="fas fa-file-excel mr-2"></i> Öncelik Listesi (Excel) Eşleştir
+                </button>
+                <button onclick="openBildirModal()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition shadow-sm flex items-center">
+                    <i class="far fa-paper-plane mr-2"></i> Seçili Pozları Tedarikçiye Bildir
+                </button>
+            </div>
+        </header>
+
+        <!-- BİLGİ BANDI -->
+        <div class="bg-blue-50 border-b border-blue-200 px-6 py-2 flex items-center justify-between text-xs text-blue-900">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-info-circle text-blue-600"></i>
+                <span><strong>Akıllı Seçim Aktif:</strong> Ambarda veya sahada <strong>teslim alınmış</strong> sipariş satırları (pozlar) otomatik kilitlenir. Sadece <strong>bekleyen / yolda olan</strong> pozlar tedarikçiye bildirilmek üzere seçili gelir.</span>
+            </div>
+            <span class="font-mono text-[11px] bg-white px-2.5 py-0.5 rounded border border-blue-200 font-bold text-blue-700">Eşleşen Resmi Poz: 39/39</span>
+        </div>
+
+        <!-- FİLTRE PANELİ -->
+        <div class="bg-white border-b px-6 py-3 flex flex-wrap items-center justify-between gap-4 flex-shrink-0">
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-gray-400 uppercase mr-1"><i class="far fa-calendar-alt mr-1"></i> Plan:</span>
+                <button onclick="filterPeriod('all', this)" class="filter-btn active text-xs font-semibold px-3 py-1.5 rounded-md border border-gray-300">Tümü (Aylık)</button>
+                <button onclick="filterPeriod('geciken', this)" class="filter-btn text-xs font-semibold px-3 py-1.5 rounded-md border border-red-200 text-red-600 bg-red-50 hover:bg-red-100">Kritik / Gecikenler</button>
+                <button onclick="filterPeriod('buhafta', this)" class="filter-btn text-xs font-semibold px-3 py-1.5 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">Bu Hafta</button>
+                <button onclick="filterPeriod('gelecekhafta', this)" class="filter-btn text-xs font-semibold px-3 py-1.5 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">Gelecek Hafta</button>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span id="filterLabel" class="text-xs font-bold text-gray-400 uppercase mr-1"><i class="fas fa-filter mr-1"></i> Sarım Tipi:</span>
+                <select id="subGroupFilter" onchange="applyAllFilters()" class="border border-gray-300 rounded-md text-xs font-semibold px-3 py-1.5 bg-gray-50 focus:outline-none focus:border-blue-500">
+                </select>
+            </div>
+        </div>
+
+        <!-- PROJE KARTLARI ALANI -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-4" id="project-container">
+
+            <!-- ==================== 1. SARIM SEKMESİ PROJELERİ ==================== -->
+            <div draggable="true" data-stage="SARIM" data-proje="87280 (STR1765 / NG EUROPE)" data-is="3005111" data-period="buhafta" class="project-card draggable-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-slate-800 text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <i class="fas fa-grip-vertical text-gray-400 cursor-grab hover:text-white text-lg"></i>
+                        <span class="bg-rose-600 text-white text-xs font-black px-3 py-1 rounded shadow">ÖNEM SIRASI: <span class="seq-num">1</span> (EN ACİL)</span>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-lg tracking-wide text-amber-300">87280</span>
+                                <span class="text-gray-400">|</span>
+                                <span class="font-bold text-sm">STR1765 / NG EUROPE</span>
+                                <span class="bg-slate-700 text-gray-200 text-xs px-2 py-0.5 rounded border border-slate-600">75 MVA / 161 kV</span>
+                            </div>
+                            <p class="text-xs text-gray-300 mt-0.5">İş No: <strong class="text-white">3005111</strong> • Satın Alma Sipariş No: <strong class="text-amber-300">8464</strong></p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="bg-sky-500 text-white px-4 py-2 rounded-lg text-center min-w-[95px] shadow">
+                            <span class="text-[10px] uppercase font-bold block opacity-90">İhtiyaç Tarihi</span>
+                            <span class="text-base font-black">14.Eki</span>
+                        </div>
+                        <button onclick="toggleDetails('detay-sarim-87280')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg text-xs font-semibold transition">
+                            <i class="fas fa-chevron-down mr-1"></i> Sipariş Satırlarını (Pozları) Gör
+                        </button>
+                    </div>
+                </div>
+
+                <div id="detay-sarim-87280" class="p-4 bg-gray-50 border-t border-gray-200 space-y-4">
+                    
+                    <!-- AG Grubu (Tamamı Teslim Alındığı İçin Otomatik Pasif ve Tiksiz) -->
+                    <div class="sub-group bg-white rounded-lg border border-gray-200 overflow-hidden opacity-85" data-subtype="AG">
+                        <div class="bg-gray-100 px-4 py-2 border-b border-gray-200 flex justify-between items-center">
+                            <label class="flex items-center gap-2 font-bold text-xs text-gray-500 cursor-not-allowed" title="Bu gruptaki tüm malzemeler teslim alındığı için bildirim kapalıdır">
+                                <input type="checkbox" disabled class="rounded text-gray-400 w-4 h-4 cursor-not-allowed">
+                                <span>AG (ALÇAK GERİLİM) SİPARİŞ SATIRLARI (TAMAMLANDI)</span>
+                            </label>
+                            <span class="bg-green-100 text-green-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-green-300">
+                                <i class="fas fa-check-double mr-1"></i> Teslim Alındı - Bildirime Gerek Yok
+                            </span>
+                        </div>
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-gray-50 text-gray-500 border-b">
+                                <tr>
+                                    <th class="p-2.5 w-10 text-center">Seç</th>
+                                    <th class="p-2.5">Eksper Önem Düzeyi</th>
+                                    <th class="p-2.5">Resmi Satın Alma Pozu (Satır No)</th>
+                                    <th class="p-2.5">Çizim / Malzeme Kodu</th>
+                                    <th class="p-2.5">Sipariş Kalemi Tanımı (1 Satır = 1 Ürün)</th>
+                                    <th class="p-2.5">Stok Kodu</th>
+                                    <th class="p-2.5">Sevkiyat Durumu</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y text-gray-500">
+                                <tr class="bg-gray-50/60">
+                                    <td class="p-2.5 text-center" title="Malzeme teslim alındı"><i class="fas fa-check-circle text-green-500 text-sm"></i></td>
+                                    <td class="p-2.5"><span class="bg-gray-200 text-gray-600 font-bold px-2 py-0.5 rounded">Tamamlandı</span></td>
+                                    <td class="p-2.5 font-mono font-bold text-gray-600"><i class="fas fa-lock text-gray-400 mr-1"></i> Sip: 8464 / Poz 13</td>
+                                    <td class="p-2.5 font-mono">6205641-02</td>
+                                    <td class="p-2.5 line-through">SİPARİŞ MALZ., A.G.</td>
+                                    <td class="p-2.5 font-mono">227377</td>
+                                    <td class="p-2.5"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded font-semibold">Ambarda Teslim Alındı</span></td>
+                                </tr>
+                                <tr class="bg-gray-50/60">
+                                    <td class="p-2.5 text-center" title="Malzeme teslim alındı"><i class="fas fa-check-circle text-green-500 text-sm"></i></td>
+                                    <td class="p-2.5"><span class="bg-gray-200 text-gray-600 font-bold px-2 py-0.5 rounded">Tamamlandı</span></td>
+                                    <td class="p-2.5 font-mono font-bold text-gray-600"><i class="fas fa-lock text-gray-400 mr-1"></i> Sip: 8464 / Poz 42</td>
+                                    <td class="p-2.5 font-mono">6205641-03</td>
+                                    <td class="p-2.5 line-through">İZOLE SİLİNDİR - AG</td>
+                                    <td class="p-2.5 font-mono">227377</td>
+                                    <td class="p-2.5"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded font-semibold">Gece Sahaya Alındı (Ahmet Usta)</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- YG Grubu (Henüz Teslim Alınmadığı İçin Otomatik Tikli ve Aktif) -->
+                    <div class="sub-group bg-white rounded-lg border border-amber-300 overflow-hidden shadow-sm" data-subtype="YG">
+                        <div class="bg-amber-50 px-4 py-2 border-b border-amber-200 flex justify-between items-center">
+                            <label class="flex items-center gap-2 font-bold text-xs text-amber-900 cursor-pointer">
+                                <input type="checkbox" checked onchange="toggleGroupCheckboxes(this)" class="rounded text-blue-600 w-4 h-4 cursor-pointer">
+                                <span>YG (YÜKSEK GERİLİM) SİPARİŞ SATIRLARI (TÜMÜNÜ SEÇ / BIRAK)</span>
+                            </label>
+                            <span class="bg-blue-100 text-blue-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-blue-300">Tedarikçi Randevusu: Bu Gece 02:00</span>
+                        </div>
+                        <table class="w-full text-left text-xs">
+                            <tbody class="divide-y">
+                                <tr class="hover:bg-amber-50/40">
+                                    <td class="p-2.5 w-10 text-center"><input type="checkbox" checked class="poz-checkbox rounded text-blue-600 w-4 h-4 cursor-pointer" data-poz="Sip: 8464 / Poz 27 (SİPARİŞ MALZ., Y.G.)"></td>
+                                    <td class="p-2.5"><span class="bg-red-100 text-red-800 font-bold px-2 py-0.5 rounded">1. Öncelik (Acil)</span></td>
+                                    <td class="p-2.5 font-mono font-bold text-blue-800"><i class="fas fa-lock text-gray-400 mr-1"></i> Sip: 8464 / Poz 27</td>
+                                    <td class="p-2.5 font-mono font-semibold">6205642-02</td>
+                                    <td class="p-2.5 font-medium">SİPARİŞ MALZ., Y.G.</td>
+                                    <td class="p-2.5 font-mono">227377</td>
+                                    <td class="p-2.5"><span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-semibold">Yolda (Saha Terminaline Düştü)</span></td>
+                                </tr>
+                                <tr class="hover:bg-amber-50/40">
+                                    <td class="p-2.5 w-10 text-center"><input type="checkbox" checked class="poz-checkbox rounded text-blue-600 w-4 h-4 cursor-pointer" data-poz="Sip: 8464 / Poz 48 (İZOLE SİLİNDİR - YG)"></td>
+                                    <td class="p-2.5"><span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">2. Öncelik (Normal)</span></td>
+                                    <td class="p-2.5 font-mono font-bold text-blue-800"><i class="fas fa-lock text-gray-400 mr-1"></i> Sip: 8464 / Poz 48</td>
+                                    <td class="p-2.5 font-mono font-semibold">6205642-03</td>
+                                    <td class="p-2.5 font-medium">İZOLE SİLİNDİR - YG</td>
+                                    <td class="p-2.5 font-mono">227377</td>
+                                    <td class="p-2.5"><span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-semibold">Yolda (Saha Terminaline Düştü)</span></td>
+                                </tr>
+                                <tr class="hover:bg-amber-50/40">
+                                    <td class="p-2.5 w-10 text-center"><input type="checkbox" checked class="poz-checkbox rounded text-blue-600 w-4 h-4 cursor-pointer" data-poz="Sip: 8464 / Poz 13-YG (YAKA - YG)"></td>
+                                    <td class="p-2.5"><span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">3. Öncelik (Normal)</span></td>
+                                    <td class="p-2.5 font-mono font-bold text-blue-800"><i class="fas fa-lock text-gray-400 mr-1"></i> Sip: 8464 / Poz 13-YG</td>
+                                    <td class="p-2.5 font-mono font-semibold">6205642-04</td>
+                                    <td class="p-2.5 font-medium">YAKA - YG</td>
+                                    <td class="p-2.5 font-mono">221897</td>
+                                    <td class="p-2.5"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-semibold">Tedarikçide (Randevu Bekleniyor)</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SARIM PROJE 2: 87148 -->
+            <div draggable="true" data-stage="SARIM" data-proje="87148 (BETAŞ - GTC1161-3)" data-is="3005030" data-period="geciken" class="project-card draggable-card bg-white rounded-xl shadow-sm border-2 border-red-300 overflow-hidden">
+                <div class="bg-slate-800 text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <i class="fas fa-grip-vertical text-gray-400 cursor-grab hover:text-white text-lg"></i>
+                        <span class="bg-blue-600 text-white text-xs font-black px-3 py-1 rounded">ÖNEM SIRASI: <span class="seq-num">2</span></span>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-lg tracking-wide text-amber-300">87148</span>
+                                <span class="text-gray-400">|</span>
+                                <span class="font-bold text-sm">BETAŞ - GTC1161-3</span>
+                                <span class="bg-slate-700 text-gray-200 text-xs px-2 py-0.5 rounded border border-slate-600">40 MVA / 132 kV</span>
+                            </div>
+                            <p class="text-xs text-gray-300 mt-0.5">İş No: <strong class="text-white">3005030</strong> • Satın Alma Sipariş No: <strong class="text-amber-300">8396</strong></p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="bg-red-600 text-white px-4 py-2 rounded-lg text-center min-w-[95px] shadow">
+                            <span class="text-[10px] uppercase font-bold block opacity-90">İhtiyaç Tarihi</span>
+                            <span class="text-base font-black">24.Eyl</span>
+                        </div>
+                        <button onclick="toggleDetails('detay-sarim-87148')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg text-xs font-semibold transition">
+                            <i class="fas fa-chevron-down mr-1"></i> Sipariş Satırlarını (Pozları) Gör
+                        </button>
+                    </div>
+                </div>
+                <div id="detay-sarim-87148" class="p-4 bg-gray-50 border-t border-gray-200">
+                    <div class="sub-group bg-white rounded-lg border border-red-200 overflow-hidden" data-subtype="AYAR">
+                        <div class="bg-red-50 px-4 py-2 border-b border-red-200 flex justify-between items-center">
+                            <label class="flex items-center gap-2 font-bold text-xs text-red-900 cursor-pointer">
+                                <input type="checkbox" checked onchange="toggleGroupCheckboxes(this)" class="rounded text-red-600 w-4 h-4 cursor-pointer">
+                                <span>AYAR SARGISI SİPARİŞ SATIRLARI (GECİKENLER)</span>
+                            </label>
+                            <span class="bg-red-100 text-red-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full">Acil Bildirim İçin Seçili</span>
+                        </div>
+                        <table class="w-full text-left text-xs">
+                            <tbody class="divide-y">
+                                <tr class="hover:bg-red-50/40">
+                                    <td class="p-2.5 w-10 text-center"><input type="checkbox" checked class="poz-checkbox rounded text-red-600 w-4 h-4 cursor-pointer" data-poz="Sip: 8396 / Poz 27 (SİPARİŞ MALZ., AYAR)"></td>
+                                    <td class="p-2.5"><span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded">KRİTİK ACİL</span></td>
+                                    <td class="p-2.5 font-mono font-bold text-blue-800"><i class="fas fa-lock text-gray-400 mr-1"></i> Sip: 8396 / Poz 27</td>
+                                    <td class="p-2.5 font-mono font-semibold">6205424-02</td>
+                                    <td class="p-2.5 font-medium">SİPARİŞ MALZ., AYAR</td>
+                                    <td class="p-2.5 font-mono">219877</td>
+                                    <td class="p-2.5"><span class="bg-red-100 text-red-700 px-2 py-0.5 rounded font-semibold">Gecikmede (Eskalasyon Maili Atıldı)</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 2. BOBİN MONTAJ SEKMESİ PROJELERİ ==================== -->
+            <div draggable="true" data-stage="MONTAJ" data-proje="85283 (RTE REACTOR PACKAGE)" data-is="3004649" data-period="buhafta" class="project-card draggable-card hidden bg-white rounded-xl shadow-sm border border-amber-300 overflow-hidden">
+                <div class="bg-slate-800 text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <i class="fas fa-grip-vertical text-gray-400 cursor-grab hover:text-white text-lg"></i>
+                        <span class="bg-amber-500 text-white text-xs font-black px-3 py-1 rounded">ÖNEM SIRASI: <span class="seq-num">1</span></span>
+                        <div>
+                            <span class="font-black text-lg text-amber-300">85283</span> | <span class="font-bold text-sm">RTE REACTOR PACKAGE</span>
+                            <p class="text-xs text-gray-300">İş No: <strong>3004649</strong> • Satın Alma Sipariş No: <strong class="text-amber-300">7896</strong></p>
+                        </div>
+                    </div>
+                    <div class="bg-amber-600 text-white px-4 py-2 rounded-lg text-center min-w-[95px]">
+                        <span class="text-[10px] uppercase font-bold block">Montaj Hedef</span>
+                        <span class="text-base font-black">19.Eki</span>
+                    </div>
+                </div>
+                <div class="p-4 bg-gray-50 border-t text-xs">
+                    <div class="sub-group bg-white p-3 rounded border flex justify-between items-center text-gray-500" data-subtype="FAZ_BARIYER">
+                        <span><i class="fas fa-check-circle text-green-500 mr-2"></i> <i class="fas fa-lock text-gray-400 mr-1"></i> <strong>Sip: 7896 / Poz 44</strong> — <span class="line-through">6205323-02 Montaj Faz Bariyer Seti YG (Stok: 220547)</span></span>
+                        <span class="bg-green-100 text-green-800 px-2 py-0.5 rounded font-bold">Ambardan Çekildi (Bildirim Kapalı)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 3. BAĞLANTI SEKMESİ PROJELERİ ==================== -->
+            <div draggable="true" data-stage="BAGLANTI" data-proje="87296 (LINXON - SOUTH OLA PV)" data-is="3005126" data-period="gelecekhafta" class="project-card draggable-card hidden bg-white rounded-xl shadow-sm border border-emerald-300 overflow-hidden">
+                <div class="bg-slate-800 text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <i class="fas fa-grip-vertical text-gray-400 cursor-grab hover:text-white text-lg"></i>
+                        <span class="bg-emerald-500 text-white text-xs font-black px-3 py-1 rounded">ÖNEM SIRASI: <span class="seq-num">1</span></span>
+                        <div>
+                            <span class="font-black text-lg text-amber-300">87296</span> | <span class="font-bold text-sm">LINXON - SOUTH OLA PV</span>
+                            <p class="text-xs text-gray-300">İş No: <strong>3005126</strong> • Satın Alma Sipariş No: <strong class="text-amber-300">8468</strong></p>
+                        </div>
+                    </div>
+                    <div class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-center min-w-[95px]">
+                        <span class="text-[10px] uppercase font-bold block">Bağlantı Hedef</span>
+                        <span class="text-base font-black">22.Eki</span>
+                    </div>
+                </div>
+                <div class="p-4 bg-gray-50 border-t text-xs">
+                    <div class="sub-group bg-white p-3 rounded border flex justify-between items-center text-gray-500" data-subtype="CIKIS_IZOLASYON">
+                        <span><i class="fas fa-check-circle text-green-500 mr-2"></i> <i class="fas fa-lock text-gray-400 mr-1"></i> <strong>Sip: 8468 / Poz 18</strong> — <span class="line-through">6205761-07 Halka Ekran Alt & Çıkış İzolasyonu YG (Stok: 228810)</span></span>
+                        <span class="bg-green-100 text-green-800 px-2 py-0.5 rounded font-bold">Ambarda Hazır (Bildirim Kapalı)</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- MODAL 1: EXCEL EŞLEŞTİRME -->
+    <div id="modalExcelEslestir" class="fixed inset-0 bg-gray-900 bg-opacity-60 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl w-full max-w-lg p-6 space-y-4 shadow-2xl border">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-gray-800"><i class="fas fa-sync text-emerald-600 mr-2"></i> Eksper Excel'i ile Satın Alma Pozlarını Eşleştir</h3>
+                <button onclick="closeModal('modalExcelEslestir')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+            </div>
+            <p class="text-xs text-gray-600">Yüklediğiniz Excel tablosundaki <strong>Proje No, İş No ve Poz No</strong> bilgileri, Satın Alma'nın resmi sipariş veritabanıyla eşleştirildi:</p>
+            <div class="bg-gray-50 border rounded-xl p-4 space-y-2 text-xs">
+                <div class="flex justify-between items-center text-green-700 font-semibold">
+                    <span><i class="fas fa-check-circle mr-1"></i> Satın Alma Siparişleriyle Eşleşen Satır (Poz):</span>
+                    <span>39 / 39 Poz</span>
+                </div>
+                <div class="flex justify-between items-center text-gray-600 font-semibold">
+                    <span><i class="fas fa-lock mr-1"></i> Teslim Alındığı İçin Otomatik Kilitlenen Pozlar:</span>
+                    <span>12 Poz (AG Grubu vb.)</span>
+                </div>
+                <div class="flex justify-between items-center text-blue-700 font-semibold">
+                    <span><i class="fas fa-check-square mr-1"></i> Tedarikçiye Bildirilmek Üzere Seçilen Aktif Pozlar:</span>
+                    <span>27 Poz</span>
+                </div>
+            </div>
+            <button onclick="closeModal('modalExcelEslestir'); alert('Eşleştirme Tamamlandı!');" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm">
+                Öncelik Sırasını Tabloya Uygula
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 2: SÜRÜKLE BIRAK ONAY -->
+    <div id="modalOnay" class="fixed inset-0 bg-gray-900 bg-opacity-60 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl w-[440px] text-center border overflow-hidden shadow-2xl">
+            <div class="bg-red-50 p-5 border-b border-red-100">
+                <i class="fas fa-sort-numeric-up text-3xl text-red-500 mb-2"></i>
+                <h3 class="text-lg font-bold text-red-700">Önem Düzeyi (Aciliyet Sırası) Değişiyor</h3>
+            </div>
+            <div class="p-6">
+                <p class="mb-4 text-sm text-gray-700"><strong id="oProje"></strong> projesine ait bekleyen sipariş pozlarının üretim önceliğini <strong>1. Sıraya (En Acil)</strong> çekmek istiyor musunuz?</p>
+                <div class="flex gap-3">
+                    <button onclick="closeModal('modalOnay')" class="flex-1 border py-2 rounded-lg font-semibold text-sm">İptal</button>
+                    <button onclick="closeModal('modalOnay'); alert('Önem düzeyi güncellendi!');" class="flex-1 bg-red-600 text-white py-2 rounded-lg font-semibold text-sm">Onayla</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: TEDARİKÇİYE BİLDİR (AKILLI SEÇİM ÖZETLİ) -->
+    <div id="modalBildir" class="fixed inset-0 bg-gray-900 bg-opacity-60 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl w-[520px] border p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-gray-800"><i class="far fa-paper-plane text-purple-600 mr-2"></i> Seçili Pozları Tedarikçiye İlet</h3>
+                <button onclick="closeModal('modalBildir')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 text-xs text-purple-900 space-y-1">
+                <p class="font-bold"><i class="fas fa-check-square mr-1"></i> İletilecek Seçili Sipariş Satırları (<span id="seciliPozSayisi">0</span> Adet):</p>
+                <ul id="seciliPozListesi" class="list-disc list-inside text-[11px] text-purple-800 pt-1 space-y-0.5"></ul>
+            </div>
+            <p class="text-[11px] text-gray-500">Not: Ambarda veya gece sahada teslim alınmış olan pozlar (Örn: AG Grubu Poz 13 ve Poz 42) otomatik olarak liste dışı bırakılmıştır.</p>
+            <div class="flex gap-4 pt-2">
+                <button onclick="closeModal('modalBildir'); alert('Seçili pozlar WhatsApp üzerinden tedarikçiye iletildi ve Satın Alma loglarına kaydedildi.')" class="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white py-3 rounded-lg font-bold flex justify-center items-center gap-2"><i class="fab fa-whatsapp text-lg"></i> WhatsApp</button>
+                <button onclick="closeModal('modalBildir'); alert('Seçili pozlar E-Posta üzerinden tedarikçiye iletildi ve Satın Alma loglarına kaydedildi.')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold flex justify-center items-center gap-2"><i class="fas fa-envelope text-lg"></i> E-Posta</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStage = 'SARIM';
+        let currentPeriod = 'all';
+
+        const stageConfig = {
+            'SARIM': {
+                label: 'Sarım Tipi:',
+                options: [
+                    { val: 'ALL', text: 'Tüm Sarım Çeşitleri (AG + YG + AYAR)' },
+                    { val: 'AG', text: 'Sadece AG (Alçak Gerilim)' },
+                    { val: 'YG', text: 'Sadece YG (Yüksek Gerilim)' },
+                    { val: 'AYAR', text: 'Sadece AYAR Sargısı' }
+                ]
+            },
+            'MONTAJ': {
+                label: 'Montaj Grubu:',
+                options: [
+                    { val: 'ALL', text: 'Tüm Bobin Montaj Grupları' },
+                    { val: 'FAZ_BARIYER', text: 'Faz Arası Bölme & Ana Bariyerler' }
+                ]
+            },
+            'BAGLANTI': {
+                label: 'Bağlantı Grubu:',
+                options: [
+                    { val: 'ALL', text: 'Tüm Bağlantı Grupları' },
+                    { val: 'CIKIS_IZOLASYON', text: 'YG/AG Çıkış Krep Boru & İzolasyon' }
+                ]
+            }
+        };
+
+        function openModal(id) { document.getElementById(id).classList.replace('hidden', 'flex'); }
+        function closeModal(id) { document.getElementById(id).classList.replace('flex', 'hidden'); }
+        function toggleDetails(id) { document.getElementById(id).classList.toggle('hidden'); }
+
+        // Grup başlığındaki tike basınca altındaki tüm aktif satırları seç/bırak
+        function toggleGroupCheckboxes(masterCheckbox) {
+            const groupDiv = masterCheckbox.closest('.sub-group');
+            groupDiv.querySelectorAll('.poz-checkbox:not(:disabled)').forEach(cb => {
+                cb.checked = masterCheckbox.checked;
+            });
+        }
+
+        // Tedarikçiye Bildir butonuna basıldığında seçili pozları listele
+        function openBildirModal() {
+            const checkedBoxes = document.querySelectorAll('.poz-checkbox:checked');
+            const listEl = document.getElementById('seciliPozListesi');
+            document.getElementById('seciliPozSayisi').innerText = checkedBoxes.length;
+            
+            if (checkedBoxes.length === 0) {
+                listEl.innerHTML = '<li class="text-red-600 font-bold">Hiçbir poz seçilmedi! Lütfen en az bir bekleyen satır seçin.</li>';
+            } else {
+                listEl.innerHTML = Array.from(checkedBoxes).map(cb => `<li>${cb.dataset.poz}</li>`).join('');
+            }
+            openModal('modalBildir');
+        }
+
+        function switchMainStage(stageKey, btn) {
+            currentStage = stageKey;
+            document.querySelectorAll('.stage-tab').forEach(t => { t.classList.remove('active'); t.classList.add('text-gray-500'); });
+            btn.classList.add('active'); btn.classList.remove('text-gray-500');
+
+            const cfg = stageConfig[stageKey];
+            document.getElementById('filterLabel').innerHTML = `<i class="fas fa-filter mr-1"></i> ${cfg.label}`;
+            document.getElementById('subGroupFilter').innerHTML = cfg.options.map(o => `<option value="${o.val}">${o.text}</option>`).join('');
+            applyAllFilters();
+        }
+
+        function filterPeriod(period, btn) {
+            currentPeriod = period;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyAllFilters();
+        }
+
+        function applyAllFilters() {
+            const subVal = document.getElementById('subGroupFilter').value;
+            document.querySelectorAll('.project-card').forEach(card => {
+                const matchStage = (card.dataset.stage === currentStage);
+                const matchPeriod = (currentPeriod === 'all' || card.dataset.period === currentPeriod);
+                if (matchStage && matchPeriod) {
+                    card.classList.remove('hidden');
+                    card.querySelectorAll('.sub-group').forEach(grp => {
+                        grp.style.display = (subVal === 'ALL' || grp.dataset.subtype === subVal) ? 'block' : 'none';
+                    });
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            switchMainStage('SARIM', document.querySelector('.stage-tab'));
+        });
+
+        let draggedCard = null;
+        document.querySelectorAll('.draggable-card').forEach(card => {
+            card.addEventListener('dragstart', function() { draggedCard = this; setTimeout(() => this.classList.add('dragging'), 0); });
+            card.addEventListener('dragend', function() { this.classList.remove('dragging'); draggedCard = null; });
+            card.addEventListener('dragover', e => e.preventDefault());
+            card.addEventListener('drop', function() {
+                if (this !== draggedCard && this.dataset.stage === draggedCard.dataset.stage) {
+                    let all = [...document.querySelectorAll(`.project-card[data-stage="${currentStage}"]`)];
+                    if (all.indexOf(draggedCard) > all.indexOf(this)) {
+                        this.before(draggedCard);
+                        document.getElementById('oProje').innerText = draggedCard.dataset.proje;
+                        openModal('modalOnay');
+                    } else {
+                        this.after(draggedCard);
+                    }
+                    document.querySelectorAll(`.project-card[data-stage="${currentStage}"] .seq-num`).forEach((el, i) => el.innerText = i + 1);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

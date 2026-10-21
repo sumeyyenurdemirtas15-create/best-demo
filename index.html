@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Sayfa - BEST ERP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .sidebar-item { transition: all 0.2s; border-left: 4px solid transparent; }
+        .sidebar-item:hover { background-color: #334155; color: #fff; }
+        .sidebar-item.active { background-color: #0f172a; color: #38bdf8; border-left-color: #38bdf8; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <aside class="w-64 flex-shrink-0 flex flex-col h-full shadow-xl z-20 bg-[#1e293b] color-[#94a3b8] text-gray-400">
+        <div class="h-16 flex items-center justify-center border-b border-gray-700 bg-gray-900">
+            <h1 class="text-2xl font-bold text-white"><i class="fas fa-bolt text-blue-500"></i> BEST<span class="text-xs font-light text-gray-400 align-top mt-1">ERP</span></h1>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 space-y-1">
+            <a href="index.html" class="sidebar-item active flex items-center px-6 py-3 text-white"><i class="fas fa-home w-6 mr-3"></i> Ana Sayfa</a>
+            <a href="eksper.html" class="sidebar-item flex items-center px-6 py-3"><i class="fas fa-industry w-6 mr-3"></i> Üretim Eksperi</a>
+            <a href="satinalma.html" class="sidebar-item flex items-center px-6 py-3"><i class="fas fa-file-invoice-dollar w-6 mr-3"></i> Satın Alma</a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full bg-gray-50">
+        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shadow-sm">
+            <h2 class="text-xl font-semibold text-gray-800">Ana Sayfa (Dashboard)</h2>
+            <div class="flex items-center space-x-3 border-l border-gray-200 pl-6">
+                <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">S</div>
+                <div class="text-sm"><p class="font-semibold text-gray-800">Sümeyyenur D.</p><p class="text-xs text-gray-500">Planlama Mühendisi</p></div>
+            </div>
+        </header>
+
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-white rounded-xl shadow-sm p-6 border flex items-center"><div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex justify-center items-center text-xl mr-4"><i class="fas fa-folder-open"></i></div><div><p class="text-sm text-gray-500">Aktif Proje</p><p class="text-2xl font-bold">42</p></div></div>
+                <div class="bg-white rounded-xl shadow-sm p-6 border flex items-center"><div class="w-12 h-12 rounded-full bg-green-50 text-green-600 flex justify-center items-center text-xl mr-4"><i class="fas fa-check-circle"></i></div><div><p class="text-sm text-gray-500">Teslim Alınan</p><p class="text-2xl font-bold">1.482</p></div></div>
+                <div class="bg-white rounded-xl shadow-sm p-6 border flex items-center"><div class="w-12 h-12 rounded-full bg-yellow-50 text-yellow-600 flex justify-center items-center text-xl mr-4"><i class="fas fa-clock"></i></div><div><p class="text-sm text-gray-500">Bekleyen Poz</p><p class="text-2xl font-bold">326</p></div></div>
+                <div class="bg-white rounded-xl shadow-sm p-6 border-red-200 border flex items-center"><div class="w-12 h-12 rounded-full bg-red-50 text-red-600 flex justify-center items-center text-xl mr-4"><i class="fas fa-exclamation-triangle"></i></div><div><p class="text-sm text-red-500">İrsaliyesiz Kabul</p><p class="text-2xl font-bold text-red-600">18</p></div></div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

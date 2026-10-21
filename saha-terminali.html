@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saha Terminali - BEST ERP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        button, select, input { touch-action: manipulation; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden select-none">
+
+    <!-- HEADER -->
+    <header class="h-24 bg-[#1e293b] text-white flex items-center justify-between px-8 shadow-lg flex-shrink-0 border-b-4 border-blue-500">
+        <div class="flex items-center gap-4">
+            <div class="bg-blue-600 p-3 rounded-xl">
+                <i class="fas fa-industry text-4xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-200">SAHA TERMİNALİ</h1>
+                <p class="text-sm text-gray-400 font-medium tracking-wider">BEST TRANSFORMER • GECE VARDİYASI</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 bg-gray-800 px-6 py-3 rounded-2xl border border-gray-600 shadow-inner">
+            <div class="text-right">
+                <p class="font-bold text-xl text-white">Ahmet Usta</p>
+                <p class="text-sm text-blue-400">Sicil: 4508</p>
+            </div>
+            <div class="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center font-bold text-2xl border-2 border-white shadow-md">
+                A
+            </div>
+        </div>
+    </header>
+
+    <!-- ANA İÇERİK -->
+    <main class="flex-1 overflow-y-auto p-8 flex flex-col items-center hide-scroll">
+        
+        <div class="w-full max-w-4xl">
+            
+            <!-- BÖLÜM 1: TEDARİKÇİDEN GELEN BİLDİRİMLER (Beklenen Resmi Pozlar) -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-black text-gray-800 border-b-4 border-gray-300 pb-3 mb-6 flex items-center">
+                    <i class="fas fa-truck-loading text-indigo-600 mr-4 text-3xl"></i> Şu An Beklenen Resmi Sipariş Pozları
+                </h2>
+                
+                <div class="grid gap-6">
+                    <!-- Kart 1 -->
+                    <div class="bg-white border-4 border-indigo-200 rounded-3xl p-6 shadow-lg flex justify-between items-center hover:border-indigo-500 transition duration-300">
+                        <div>
+                            <div class="flex gap-3 mb-3">
+                                <span class="bg-blue-100 text-blue-800 text-xs font-black px-3 py-1.5 rounded-full uppercase border border-blue-200"><i class="fas fa-lock mr-1"></i> Sip: 8464 / Poz 48</span>
+                                <span class="bg-indigo-100 text-indigo-800 text-sm font-black px-4 py-1.5 rounded-full uppercase border border-indigo-200">PRJ-87280</span>
+                            </div>
+                            <h3 class="text-3xl font-black text-gray-800 mt-1">İzole Silindir - YG</h3>
+                            <p class="text-gray-500 text-sm font-mono mt-1">Stok Kodu: <strong class="text-gray-800">227377</strong> | Çizim: <strong class="text-gray-800">6205642-03</strong></p>
+                            <div class="flex items-center gap-2 mt-3">
+                                <i class="fas fa-boxes text-gray-400 text-xl"></i>
+                                <p class="text-gray-500 text-lg">Beklenen Miktar: <strong class="text-gray-900 text-2xl ml-1">48 Adet</strong></p>
+                            </div>
+                        </div>
+                        <!-- Detaylı Kabul Formunu Açan Buton -->
+                        <button onclick="openKabulModal('Sip: 8464 / Poz 48', 'İzole Silindir - YG', '227377', 48)" class="bg-[#25D366] hover:bg-green-600 text-white font-black text-2xl px-10 py-8 rounded-2xl shadow-xl transition transform active:scale-95 flex flex-col items-center gap-2 border-b-8 border-green-700">
+                            <i class="fas fa-check-circle text-5xl mb-1"></i> 
+                            KABUL ET & GİR
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AYIRAÇ -->
+            <div class="flex items-center justify-center my-10 opacity-70">
+                <div class="border-t-4 border-gray-300 w-full rounded-full"></div>
+                <span class="bg-gray-200 px-6 py-2 rounded-full text-gray-600 font-black text-lg uppercase tracking-widest mx-4">VEYA</span>
+                <div class="border-t-4 border-gray-300 w-full rounded-full"></div>
+            </div>
+
+            <!-- BÖLÜM 2: MANUEL YENİ GİRİŞ -->
+            <div>
+                <button onclick="toggleManuelGiris()" id="btnYeniGiris" class="w-full bg-white border-4 border-dashed border-gray-300 hover:border-blue-500 text-gray-500 hover:text-blue-600 font-black text-2xl py-10 rounded-3xl transition flex justify-center items-center gap-4 active:scale-[0.98]">
+                    <i class="fas fa-plus-circle text-4xl"></i> DİĞER (Listede Olmayan Malzeme Geldi)
+                </button>
+
+                <!-- Gizli Manuel Giriş Formu -->
+                <div id="manuelGirisFormu" class="hidden bg-white border-4 border-blue-200 rounded-3xl p-8 mt-4 shadow-2xl">
+                    <h3 class="text-2xl font-black text-blue-900 mb-6 border-b-2 border-blue-100 pb-4">Yeni Malzeme & Seri No Girişi</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-500 font-bold mb-2 text-xl">Sipariş Numarası</label>
+                                <input type="text" placeholder="Örn: 8464" class="w-full border-4 border-gray-200 rounded-2xl p-4 text-xl font-black bg-gray-50 focus:border-blue-500 focus:bg-white outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-gray-500 font-bold mb-2 text-xl">Poz / Satır No</label>
+                                <input type="text" placeholder="Örn: Poz 48" class="w-full border-4 border-gray-200 rounded-2xl p-4 text-xl font-black bg-gray-50 focus:border-blue-500 focus:bg-white outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-500 font-bold mb-2 text-xl">Stok Kodu</label>
+                                <input type="text" placeholder="Örn: 227377" class="w-full border-4 border-gray-200 rounded-2xl p-4 text-xl font-black bg-gray-50 focus:border-blue-500 focus:bg-white outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-gray-500 font-bold mb-2 text-xl">Miktar</label>
+                                <input type="number" placeholder="0" class="w-full border-4 border-gray-200 rounded-2xl p-4 text-xl font-black bg-gray-50 focus:border-blue-500 focus:bg-white outline-none text-blue-700">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-gray-500 font-bold mb-2 text-xl">Seri Numarası / Parti No (Opsiyonel)</label>
+                            <input type="text" placeholder="Barkod okutun veya seri no girin..." class="w-full border-4 border-gray-200 rounded-2xl p-4 text-xl font-mono bg-gray-50 focus:border-blue-500 focus:bg-white outline-none">
+                        </div>
+
+                        <div class="pt-6 flex gap-6">
+                            <button onclick="toggleManuelGiris()" class="flex-1 bg-gray-200 text-gray-600 font-black text-2xl py-6 rounded-2xl transition">İPTAL</button>
+                            <button onclick="manuelKabulKaydet()" class="flex-[2] bg-blue-600 text-white font-black text-2xl py-6 rounded-2xl shadow-lg transition flex justify-center items-center gap-3">
+                                <i class="fas fa-save text-3xl"></i> ONAYLA VE ÜRETİME AL
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- KİOSK TİPİ DETAYLI KABUL VE SERİ NO GİRİŞ MODALI -->
+    <div id="modalKabulDetay" class="fixed inset-0 bg-gray-900 bg-opacity-80 hidden items-center justify-center z-50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-[2.5rem] w-full max-w-xl p-8 shadow-2xl border-4 border-blue-500 space-y-6">
+            <div class="flex justify-between items-center border-b pb-4">
+                <div>
+                    <span id="modalPozBaslik" class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Sip: 8464 / Poz 48</span>
+                    <h3 id="modalMalzemeAdi" class="text-2xl font-black text-gray-800 mt-1">İzole Silindir - YG</h3>
+                </div>
+                <button onclick="closeKabulModal()" class="text-gray-400 hover:text-gray-600 text-2xl"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-600 font-bold mb-1 text-sm">Stok Kodu (Sabit)</label>
+                    <input type="text" id="inputStokKodu" readonly class="w-full border-2 border-gray-200 rounded-xl p-3 font-mono font-bold bg-gray-100 text-gray-700 text-lg">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-600 font-bold mb-1 text-sm">Teslim Alınan Miktar</label>
+                        <input type="number" id="inputMiktar" class="w-full border-2 border-blue-300 rounded-xl p-3 font-black text-2xl text-center bg-blue-50 text-blue-700 outline-none focus:border-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-gray-600 font-bold mb-1 text-sm">Seri No / Lot / Barkod</label>
+                        <input type="text" id="inputSeriNo" placeholder="Seri no girin..." class="w-full border-2 border-gray-300 rounded-xl p-3 font-mono text-lg bg-gray-50 outline-none focus:border-blue-600">
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800">
+                    <i class="fas fa-info-circle mr-1"></i> Bu işlem onaylandığı an Seri No ve Miktar bilgisi Oracle'a işlenecek ve Satın Alma birimine fatura eşleştirmesi için iletilecektir.
+                </div>
+            </div>
+
+            <div class="flex gap-4 pt-2">
+                <button onclick="closeKabulModal()" class="flex-1 bg-gray-200 text-gray-700 font-bold text-lg py-4 rounded-xl">İptal</button>
+                <button onclick="onaylaVeUretimeAl()" class="flex-[2] bg-green-600 hover:bg-green-700 text-white font-black text-lg py-4 rounded-xl shadow-lg flex justify-center items-center gap-2">
+                    <i class="fas fa-check-circle text-2xl"></i> KABULÜ ONAYLA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BAŞARI ONAY MODALI -->
+    <div id="modalOnay" class="fixed inset-0 bg-gray-900 bg-opacity-80 hidden items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-[3rem] w-[90%] max-w-2xl p-12 text-center shadow-2xl border-8 border-green-500">
+            <div class="w-40 h-40 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-green-200">
+                <i class="fas fa-check text-7xl text-green-500"></i>
+            </div>
+            <h2 class="text-5xl font-black text-gray-800 mb-4">İŞLEM BAŞARILI!</h2>
+            <p class="text-gray-500 text-2xl mb-10 font-medium" id="onayMetni">Malzeme üretime alındı.</p>
+            <button onclick="kapatTamam()" class="w-full bg-gray-800 hover:bg-black text-white font-black text-3xl py-8 rounded-3xl transition shadow-xl border-b-8 border-gray-900">
+                TAMAM (ANA EKRANA DÖN)
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function openKabulModal(poz, malzeme, stokKodu, miktar) {
+            document.getElementById('modalPozBaslik').innerText = poz;
+            document.getElementById('modalMalzemeAdi').innerText = malzeme;
+            document.getElementById('inputStokKodu').value = stokKodu;
+            document.getElementById('inputMiktar').value = miktar;
+            document.getElementById('inputSeriNo').value = '';
+            document.getElementById('modalKabulDetay').classList.replace('hidden', 'flex');
+        }
+
+        function closeKabulModal() {
+            document.getElementById('modalKabulDetay').classList.replace('flex', 'hidden');
+        }
+
+        function onaylaVeUretimeAl() {
+            const miktar = document.getElementById('inputMiktar').value;
+            const seriNo = document.getElementById('inputSeriNo').value || "Belirtilmedi";
+            const poz = document.getElementById('modalPozBaslik').innerText;
+            
+            closeKabulModal();
+            document.getElementById('onayMetni').innerHTML = `<strong>${poz}</strong> (Miktar: ${miktar} Adet)<br>Seri No: <span class="font-mono text-blue-600">${seriNo}</span> ile üretime alındı ve Satın Alma'ya bildirildi.`;
+            document.getElementById('modalOnay').classList.replace('hidden', 'flex');
+        }
+
+        function toggleManuelGiris() {
+            let form = document.getElementById('manuelGirisFormu');
+            let btn = document.getElementById('btnYeniGiris');
+            if (form.classList.contains('hidden')) {
+                form.classList.replace('hidden', 'block');
+                btn.style.display = 'none';
+            } else {
+                form.classList.replace('block', 'hidden');
+                btn.style.display = 'flex';
+            }
+        }
+
+        function manuelKabulKaydet() {
+            document.getElementById('onayMetni').innerHTML = `Manuel girilen malzeme seri no ve miktar bilgileriyle birlikte sisteme işlendi.`;
+            document.getElementById('modalOnay').classList.replace('hidden', 'flex');
+            toggleManuelGiris();
+        }
+
+        function kapatTamam() {
+            document.getElementById('modalOnay').classList.replace('flex', 'hidden');
+        }
+    </script>
+</body>
+</html>
